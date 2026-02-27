@@ -1,0 +1,258 @@
+﻿@page "/"
+
+<PageTitle>KUSB Calculator</PageTitle>
+
+<div class="comp">
+    @foreach (var weapon in CompList)
+    {
+        <div class="item">
+            <img src="@weapon.imgUrl" alt="@weapon.name" @onclick="() => removeFromComp(weapon)" />
+            <div class="label">
+                <p>@weapon.name</p>
+                <p>$@weapon.price</p>
+            </div>
+        </div>
+    }
+    @for (int i = CompList.Count; i < 4; i++)
+    {
+        <div class="item"></div>
+    }
+    
+</div>
+<div class="total">
+    @if (getCompPrice() > 100)
+    {
+        <h1 style="color: red;"><u>$@getCompPrice()</u></h1>
+    }
+    else
+    {
+        <h1><u>$@getCompPrice()</u></h1>
+    }
+</div>
+
+<div class="space">
+    <br /> 
+    <h1>Weapon List</h1>
+
+    <br /> 
+
+    @for (int i = 50; i > 0; i -= 10)
+    {
+        <details>
+            <summary>$@i</summary>
+            <div class="weapons">
+                @foreach (var weapon in WeaponList)
+                {
+                    @if (weapon.price == i) 
+                    {
+                        <div @onclick="() => addToComp(weapon)">
+                            <img src="@weapon.imgUrl" alt="@weapon.name" />
+                        </div>    
+                    }
+                }
+            </div>
+        </details>
+    }
+</div>
+
+@code {
+    public List<Weapon> WeaponList = new List<Weapon>
+    {
+        // Shooters
+        new Weapon("Sploosh-o-matic", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/4/4f/S3_Badge_Sploosh-o-matic_4.png"),
+        new Weapon("Neo Sploosh-o-matic", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/1/1b/S3_Badge_Neo_Sploosh-o-matic_4.png"),
+        new Weapon("Splattershot Jr.", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/6/6e/S3_Badge_Splattershot_Jr._4.png"),
+        new Weapon("Custom Splattershot Jr.", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/5/5b/S3_Badge_Custom_Splattershot_Jr._4.png"),
+        new Weapon("Splash-o-matic", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/9/90/S3_Badge_Splash-o-matic_4.png"),
+        new Weapon("Neo Splash-o-matic", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/6/64/S3_Badge_Neo_Splash-o-matic_4.png"),
+        new Weapon("Splash-o-matic GCK-O", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/1/13/S3_Badge_Splash-o-matic_GCK-O_4.png"),
+        new Weapon("Aerospray MG", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/b/bf/S3_Badge_Aerospray_MG_4.png"),
+        new Weapon("Aerospray RG", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/7/70/S3_Badge_Aerospray_RG_4.png"),
+        new Weapon("Splattershot", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d4/S3_Badge_Splattershot_4.png"),
+        new Weapon("Tentatek Splattershot", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/1/1c/S3_Badge_Tentatek_Splattershot_4.png"),
+        new Weapon("Glamorz Splattershot", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/e/ec/S3_Badge_Glamorz_Splattershot_4.png"),
+        new Weapon("Octo Shot Replica", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c9/S3_Badge_Octo_Shot_Replica_4.png"),
+        new Weapon(".52 Gal", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/0/06/S3_Badge_.52_Gal_4.png"),
+        new Weapon("N-ZAP '85", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/0/01/S3_Badge_N-ZAP_%2785_4.png"),
+        new Weapon("N-ZAP '89", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/8/8e/S3_Badge_N-ZAP_%2789_4.png"),
+        new Weapon("Splattershot Pro", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b4/S3_Badge_Splattershot_Pro_4.png"),
+        new Weapon("Forge Splattershot Pro", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b8/S3_Badge_Forge_Splattershot_Pro_4.png"),
+        new Weapon("Splattershot Pro FRZ-N", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d8/S3_Badge_Splattershot_Pro_FRZ-N_4.png"),
+        new Weapon(".96 Gal", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/2/2c/S3_Badge_.96_Gal_4.png"),
+        new Weapon(".96 Gal Deco", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/3/31/S3_Badge_.96_Gal_Deco_4.png"),
+        new Weapon("Clawz .96 Gal", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/f/f8/S3_Badge_Clawz_.96_Gal_4.png"),
+        new Weapon("Jet Squelcher", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/2/25/S3_Badge_Jet_Squelcher_4.png"),
+        new Weapon("Custom Jet Squelcher", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/1/1e/S3_Badge_Custom_Jet_Squelcher_4.png"),
+        new Weapon("Jet Squelcher COB-R", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/0/04/S3_Badge_Jet_Squelcher_COB-R_4.png"),
+        new Weapon("Splattershot Nova", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/1/13/S3_Badge_Splattershot_Nova_4.png"),
+        new Weapon("Annaki Splattershot Nova", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c7/S3_Badge_Annaki_Splattershot_Nova_4.png"),
+        new Weapon("L-3 Nozzlenose", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/8/8a/S3_Badge_L-3_Nozzlenose_4.png"),
+        new Weapon("L-3 Nozzlenose D", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b0/S3_Badge_L-3_Nozzlenose_D_4.png"),
+        new Weapon("Glitterz L-3 Nozzlenose", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/5/56/S3_Badge_Glitterz_L-3_Nozzlenose_4.png"),
+        new Weapon("H-3 Nozzlenose", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/5/56/S3_Badge_H-3_Nozzlenose_4.png"),
+        new Weapon("H-3 Nozzlenose D", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/5/59/S3_Badge_H-3_Nozzlenose_D_4.png"),
+        new Weapon("H-3 Nozzlenose VIP-R", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/6/6f/S3_Badge_H-3_Nozzlenose_VIP-R_4.png"),
+        new Weapon("Squeezer", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b1/S3_Badge_Squeezer_4.png"),
+        
+        // Blasters
+        new Weapon("Luna Blaster", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/ad/S3_Badge_Luna_Blaster_4.png"),
+        new Weapon("Luna Blaster Neo", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/7/7b/S3_Badge_Luna_Blaster_Neo_4.png"),
+        new Weapon("Blaster", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/3/32/S3_Badge_Blaster_4.png"),
+        new Weapon("Custom Blaster", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b3/S3_Badge_Custom_Blaster_4.png"),
+        new Weapon("Gleamz Blaster", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/6/6e/S3_Badge_Gleamz_Blaster_4.png"),
+        new Weapon("Range Blaster", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/7/74/S3_Badge_Range_Blaster_4.png"),
+        new Weapon("Custom Range Blaster", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/a/aa/S3_Badge_Custom_Range_Blaster_4.png"),
+        new Weapon("Clash Blaster", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/9/92/S3_Badge_Clash_Blaster_4.png"),
+        new Weapon("Clash Blaster Neo", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/a/ae/S3_Badge_Clash_Blaster_Neo_4.png"),
+        new Weapon("Rapid Blaster", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/3/3b/S3_Badge_Rapid_Blaster_4.png"),
+        new Weapon("Rapid Blaster Deco", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/a/ab/S3_Badge_Rapid_Blaster_Deco_4.png"),
+        new Weapon("Rapid Blaster Pro", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/0/0e/S3_Badge_Rapid_Blaster_Pro_4.png"),
+        new Weapon("Rapid Blaster Pro Deco", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/9/9f/S3_Badge_Rapid_Blaster_Pro_Deco_4.png"),
+        new Weapon("Rapid Blaster Pro WNT-R", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/e/ed/S3_Badge_Rapid_Blaster_Pro_WNT-R_4.png"),
+        new Weapon("S-BLAST '92", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/a/a9/S3_Badge_S-BLAST_%2792_4.png"),
+        new Weapon("S-BLAST '91", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/5/5f/S3_Badge_S-BLAST_%2791_4.png"),
+        
+        // Rollers
+        new Weapon("Carbon Roller", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/af/S3_Badge_Carbon_Roller_4.png"),
+        new Weapon("Carbon Roller Deco", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/0/0e/S3_Badge_Carbon_Roller_Deco_4.png"),
+        new Weapon("Carbon Roller ANG-L", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/9/92/S3_Badge_Carbon_Roller_ANG-L_4.png"),
+        new Weapon("Splat Roller", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/3/3a/S3_Badge_Splat_Roller_4.png"),
+        new Weapon("Krak-On Splat Roller", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/aa/S3_Badge_Krak-On_Splat_Roller_4.png"),
+        new Weapon("Dynamo Roller", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/e/e6/S3_Badge_Dynamo_Roller_4.png"),
+        new Weapon("Gold Dynamo Roller", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/f/f0/S3_Badge_Gold_Dynamo_Roller_4.png"),
+        new Weapon("Starz Dynamo Roller", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/5/53/S3_Badge_Starz_Dynamo_Roller_4.png"),
+        new Weapon("Flingza Roller", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b7/S3_Badge_Flingza_Roller_4.png"),
+        new Weapon("Big Swig Roller", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d0/S3_Badge_Big_Swig_Roller_4.png"),
+        new Weapon("Big Swig Roller Express", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/1/11/S3_Badge_Big_Swig_Roller_Express_4.png"),
+        new Weapon("Planetz Big Swig Roller", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/3/31/S3_Badge_Planetz_Big_Swig_Roller_4.png"),
+        
+        // Brushes
+        new Weapon("Inkbrush", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/4/41/S3_Badge_Inkbrush_4.png"),
+        new Weapon("Inkbrush Nouveau", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/2/2d/S3_Badge_Inkbrush_Nouveau_4.png"),
+        new Weapon("Octobrush", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/4/4f/S3_Badge_Octobrush_4.png"),
+        new Weapon("Octobrush Nouveau", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d6/S3_Badge_Octobrush_Nouveau_4.png"),
+        new Weapon("Cometz Octobrush", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/f/f4/S3_Badge_Cometz_Octobrush_4.png"),
+        new Weapon("Painbrush", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/2/21/S3_Badge_Painbrush_4.png"),
+        new Weapon("Painbrush Nouveau", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b5/S3_Badge_Painbrush_Nouveau_4.png"),
+        new Weapon("Painbrush BRN-Z", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/7/70/S3_Badge_Painbrush_BRN-Z_4.png"),
+        
+        // Chargers
+        new Weapon("Classic Squiffer", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/3/39/S3_Badge_Classic_Squiffer_4.png"),
+        new Weapon("New Squiffer", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c5/S3_Badge_New_Squiffer_4.png"),
+        new Weapon("Splat Charger", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/0/0d/S3_Badge_Splat_Charger_4.png"),
+        new Weapon("Z+F Splat Charger", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/7/74/S3_Badge_Z%2BF_Splat_Charger_4.png"),
+        new Weapon("Splat Charger CAM-O", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b4/S3_Badge_Splat_Charger_CAM-O_4.png"),
+        new Weapon("Splatterscope", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/1/12/S3_Badge_Splatterscope_4.png"),
+        new Weapon("Z+F Splatterscope", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c8/S3_Badge_Z%2BF_Splatterscope_4.png"),
+        new Weapon("Splatterscope CAM-O", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/5/52/S3_Badge_Splatterscope_CAM-O_4.png"),
+        new Weapon("E-liter 4K", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/a/a7/S3_Badge_E-liter_4K_4.png"),
+        new Weapon("Custom E-liter 4K", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/e/ed/S3_Badge_Custom_E-liter_4K_4.png"),
+        new Weapon("E-liter 4K Scope", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/7/71/S3_Badge_E-liter_4K_Scope_4.png"),
+        new Weapon("Custom E-liter 4K Scope", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d8/S3_Badge_Custom_E-liter_4K_Scope_4.png"),
+        new Weapon("Bamboozler 14 Mk I", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/8/8e/S3_Badge_Bamboozler_14_Mk_I_4.png"),
+        new Weapon("Bamboozler 14 Mk II", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/6/64/S3_Badge_Bamboozler_14_Mk_II_4.png"),
+        new Weapon("Goo Tuber", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/c/cf/S3_Badge_Goo_Tuber_4.png"),
+        new Weapon("Custom Goo Tuber", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/8/80/S3_Badge_Custom_Goo_Tuber_4.png"),
+        new Weapon("Snipewriter 5H", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/6/69/S3_Badge_Snipewriter_5H_4.png"),
+        new Weapon("Snipewriter 5B", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/2/2c/S3_Badge_Snipewriter_5B_4.png"),
+        
+        // Sloshers
+        new Weapon("Slosher", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/5/57/S3_Badge_Slosher_4.png"),
+        new Weapon("Slosher Deco", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/1/13/S3_Badge_Slosher_Deco_4.png"),
+        new Weapon("Tri-Slosher", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/b/bd/S3_Badge_Tri-Slosher_4.png"),
+        new Weapon("Tri-Slosher Nouveau", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/6/67/S3_Badge_Tri-Slosher_Nouveau_4.png"),
+        new Weapon("Sloshing Machine", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/b/ba/S3_Badge_Sloshing_Machine_4.png"),
+        new Weapon("Sloshing Machine Neo", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/4/4b/S3_Badge_Sloshing_Machine_Neo_4.png"),
+        new Weapon("Bloblobber", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/5/55/S3_Badge_Bloblobber_4.png"),
+        new Weapon("Bloblobber Deco", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/b/bd/S3_Badge_Bloblobber_Deco_4.png"),
+        new Weapon("Explosher", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/ae/S3_Badge_Explosher_4.png"),
+        new Weapon("Custom Explosher", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/1/1d/S3_Badge_Custom_Explosher_4.png"),
+        new Weapon("Dread Wringer", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/0/0a/S3_Badge_Dread_Wringer_4.png"),
+        new Weapon("Dread Wringer D", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/9/9e/S3_Badge_Dread_Wringer_D_4.png"),
+        new Weapon("Hornz Dread Wringer", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/0/0a/S3_Badge_Hornz_Dread_Wringer_4.png"),
+        
+        // Splatlings
+        new Weapon("Mini Splatling", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/2/2a/S3_Badge_Mini_Splatling_4.png"),
+        new Weapon("Zink Mini Splatling", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/7/78/S3_Badge_Zink_Mini_Splatling_4.png"),
+        new Weapon("Mini Splatling RTL-R", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/1/1e/S3_Badge_Mini_Splatling_RTL-R_4.png"),
+        new Weapon("Heavy Splatling", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/ad/S3_Badge_Heavy_Splatling_4.png"),
+        new Weapon("Heavy Splatling Deco", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/9/96/S3_Badge_Heavy_Splatling_Deco_4.png"),
+        new Weapon("Hydra Splatling", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/f/ff/S3_Badge_Hydra_Splatling_4.png"),
+        new Weapon("Torrentz Hydra Splatling", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/2/22/S3_Badge_Torrentz_Hydra_Splatling_4.png"),
+        new Weapon("Ballpoint Splatling", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c9/S3_Badge_Ballpoint_Splatling_4.png"),
+        new Weapon("Ballpoint Splatling Nouveau", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/e/ee/S3_Badge_Ballpoint_Splatling_Nouveau_4.png"),
+        new Weapon("Nautilus 47", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c0/S3_Badge_Nautilus_47_4.png"),
+        new Weapon("Nautilus 79", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/4/48/S3_Badge_Nautilus_79_4.png"),
+        new Weapon("Heavy Edit Splatling", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/e/e8/S3_Badge_Heavy_Edit_Splatling_4.png"),
+        new Weapon("Heavy Edit Splatling Nouveau", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/9/9d/S3_Badge_Heavy_Edit_Splatling_Nouveau_4.png"),
+        
+        // Dualies
+        new Weapon("Dapple Dualies", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/5/58/S3_Badge_Dapple_Dualies_4.png"),
+        new Weapon("Dapple Dualies Nouveau", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/6/66/S3_Badge_Dapple_Dualies_Nouveau_4.png"),
+        new Weapon("Dapple Dualies NOC-T", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b6/S3_Badge_Dapple_Dualies_NOC-T_4.png"),
+        new Weapon("Splat Dualies", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/0/0e/S3_Badge_Splat_Dualies_4.png"),
+        new Weapon("Enperry Splat Dualies", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/e/e6/S3_Badge_Enperry_Splat_Dualies_4.png"),
+        new Weapon("Twinklez Splat Dualies", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/4/4e/S3_Badge_Twinklez_Splat_Dualies_4.png"),
+        new Weapon("Glooga Dualies", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/6/65/S3_Badge_Glooga_Dualies_4.png"),
+        new Weapon("Glooga Dualies Deco", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/af/S3_Badge_Glooga_Dualies_Deco_4.png"),
+        new Weapon("Dualie Squelchers", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d5/S3_Badge_Dualie_Squelchers_4.png"),
+        new Weapon("Custom Dualie Squelchers", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/a/ac/S3_Badge_Custom_Dualie_Squelchers_4.png"),
+        new Weapon("Dark Tetra Dualies", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/5/52/S3_Badge_Dark_Tetra_Dualies_4.png"),
+        new Weapon("Light Tetra Dualies", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/f/f9/S3_Badge_Light_Tetra_Dualies_4.png"),
+        new Weapon("Douser Dualies FF", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/0/05/S3_Badge_Douser_Dualies_FF_4.png"),
+        new Weapon("Custom Douser Dualies FF", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/c/c7/S3_Badge_Custom_Douser_Dualies_FF_4.png"),
+        
+        // Brellas
+        new Weapon("Splat Brella", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/2/29/S3_Badge_Splat_Brella_4.png"),
+        new Weapon("Sorella Brella", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/4/41/S3_Badge_Sorella_Brella_4.png"),
+        new Weapon("Tenta Brella",210, "https://cdn.wikimg.net/en/splatoonwiki/images/b/be/S3_Badge_Tenta_Brella_4.png"),
+        new Weapon("Tenta Sorella Brella", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/7/70/S3_Badge_Tenta_Sorella_Brella_4.png"),
+        new Weapon("Tenta Brella CRE-M", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/2/26/S3_Badge_Tenta_Brella_CRE-M_4.png"),
+        new Weapon("Undercover Brella", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/a4/S3_Badge_Undercover_Brella_4.png"),
+        new Weapon("Patternz Undercover Brella", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/2/28/S3_Badge_Patternz_Undercover_Brella_4.png"),
+        new Weapon("Recycled Brella 24 Mk I", 10, "https://cdn.wikimg.net/en/splatoonwiki/images/2/24/S3_Badge_Recycled_Brella_24_Mk_I_4.png"),
+        new Weapon("Recycled Brella 24 Mk II", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/d/dd/S3_Badge_Recycled_Brella_24_Mk_II_4.png"),
+        
+        // Stringers
+        new Weapon("Tri-Stringer", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/3/34/S3_Badge_Tri-Stringer_4.png"),
+        new Weapon("Inkline Tri-Stringer", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/1/11/S3_Badge_Inkline_Tri-Stringer_4.png"),
+        new Weapon("Bulbz Tri-Stringer", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/e/e3/S3_Badge_Bulbz_Tri-Stringer_4.png"),
+        new Weapon("REEF-LUX 450", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/9/9c/S3_Badge_REEF-LUX_450_4.png"),
+        new Weapon("REEF-LUX 450 Deco", 20, "https://cdn.wikimg.net/en/splatoonwiki/images/a/a0/S3_Badge_REEF-LUX_450_Deco_4.png"),
+        new Weapon("REEF-LUX 450 MIL-K", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/d/d2/S3_Badge_REEF-LUX_450_MIL-K_4.png"),
+        new Weapon("Wellstring V", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/6/61/S3_Badge_Wellstring_V_4.png"),
+        new Weapon("Custom Wellstring V", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/4/42/S3_Badge_Custom_Wellstring_V_4.png"),
+        
+        // Splatanas
+        new Weapon("Splatana Stamper", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/2/2c/S3_Badge_Splatana_Stamper_4.png"),
+        new Weapon("Splatana Stamper Nouveau", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/f/f2/S3_Badge_Splatana_Stamper_Nouveau_4.png"),
+        new Weapon("Stickerz Splatana Stamper", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/b/b7/S3_Badge_Stickerz_Splatana_Stamper_4.png"),
+        new Weapon("Splatana Wiper", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/4/4b/S3_Badge_Splatana_Wiper_4.png"),
+        new Weapon("Splatana Wiper Deco", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/2/21/S3_Badge_Splatana_Wiper_Deco_4.png"),
+        new Weapon("Splatana Wiper RUS-T", 30, "https://cdn.wikimg.net/en/splatoonwiki/images/3/33/S3_Badge_Splatana_Wiper_RUS-T_4.png"),
+        new Weapon("Mint Decavitator", 50, "https://cdn.wikimg.net/en/splatoonwiki/images/f/fe/S3_Badge_Mint_Decavitator_4.png"),
+        new Weapon("Charcoal Decavitator", 40, "https://cdn.wikimg.net/en/splatoonwiki/images/3/3f/S3_Badge_Charcoal_Decavitator_4.png"),
+    };
+    
+    public List<Weapon> CompList = new List<Weapon>();
+
+    public void addToComp(Weapon item) {
+        if (CompList.Count < 4) {
+            CompList.Add(item);
+        }
+    }
+
+    public void removeFromComp(Weapon item) {
+        if (CompList.Count > 0) {
+            CompList.Remove(item);
+        }   
+    }
+
+    public int getCompPrice() {
+        int price = 0;
+        foreach (var weapon in CompList) {
+            price += weapon.price;
+        }
+        return price;
+    }
+}
